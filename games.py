@@ -65,25 +65,25 @@ def minmax_cutoff(game, state):
     def max_value(state, depth):
         if game.terminal_test(state):
             return game.utility(state, player)
+        if depth > game.d:
+            return game.eval1(state)
         v = -np.inf
         for a in game.actions(state):
-            if depth > game.d:
-                return game.eval1(state)
             v = max(v, min_value(game.result(state, a), depth + 1))
         return v
 
     def min_value(state, depth):
         if game.terminal_test(state):
             return game.utility(state, player)
+        if depth > game.d:
+            return game.eval1(state)
         v = np.inf
         for a in game.actions(state):
-            if depth > game.d:
-                return game.eval1(state)
             v = min(v, max_value(game.result(state, a), depth + 1))
         return v
 
     # Body of minmax:
-    return max(game.actions(state), key=lambda a: min_value(game.result(state, a), game.d), default=None)
+    return max(game.actions(state), key=lambda a: min_value(game.result(state, a), 1), default=None)
 
 def minmax_player(game, state):
     """uses minmax or minmax with cutoff depth, for AI player"""
@@ -98,15 +98,13 @@ def minmax_player(game, state):
     end = start + game.timer
     """use the above timer to implement iterative deepening loop bellow, using minmax_cutoff(), controlled by the timer"""
     move = None
-    print("Your code goes here -5pt")
+    # print("Your code goes here -5pt")
 
     depth = 1
     while time.perf_counter() < end:
         game.d = depth
         move = minmax_cutoff(game, state)
         depth += 1
-        print("minmax_player: iterative deepening to depth: ", game.d)
-
 
     print("minmax_player: iterative deepening to depth: ", game.d)
     return move
