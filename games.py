@@ -83,7 +83,7 @@ def minmax_cutoff(game, state):
         return v
 
     # Body of minmax:
-    return max(game.actions(state), key=lambda a: min_value(game.result(state, a), 1), default=None)
+    return max(game.actions(state), key=lambda a: min_value(game.result(state, a), game.d), default=None)
 
 def minmax_player(game, state):
     """uses minmax or minmax with cutoff depth, for AI player"""
@@ -160,14 +160,13 @@ def alpha_beta_cutoff(game, state):
 
     def max_value(state, alpha, beta, depth):
         if game.terminal_test(state):
-            # return game.eval1(state)
             return game.utility(state, player)
+        if depth == game.d:
+            return game.eval1(state)
         v = -np.inf
         for a in game.actions(state):
-            if depth > game.d:
-                return game.eval1(state)
-            # v = max(v, min_value(game.result(state, a), alpha, beta, depth + 1))
-            v = max(v, min_value(game.result(state, a), alpha, beta, time.perf_counter()))
+            v = max(v, min_value(game.result(state, a), alpha, beta, depth + 1))
+            # v = max(v, min_value(game.result(state, a), alpha, beta, time.perf_counter()))
             if v >= beta:
                 return v
             alpha = max(alpha, v)
@@ -175,14 +174,13 @@ def alpha_beta_cutoff(game, state):
 
     def min_value(state, alpha, beta, depth):
         if game.terminal_test(state):
-            # return game.eval1(state)
             return game.utility(state, player)
+        if depth == game.d:
+            return game.eval1(state)
         v = np.inf
         for a in game.actions(state):
-            if depth > game.d:
-                return 0
-            # v = min(v, max_value(game.result(state, a), alpha, beta, depth + 1))
-            v = min(v, max_value(game.result(state, a), alpha, beta, time.perf_counter()))
+            v = min(v, max_value(game.result(state, a), alpha, beta, depth + 1))
+            # v = min(v, max_value(game.result(state, a), alpha, beta, time.perf_counter()))
             if v <= alpha:
                 return v
             beta = min(beta, v)
@@ -219,14 +217,10 @@ def alpha_beta_player(game, state):
     # print("Your code goes here -5pt")
 
     depth = 1
-    game.d = end
-    move = alpha_beta_cutoff(game, state)
-
-    # depth = 1
-    # while time.perf_counter() < end:
-    #     game.d = depth
-    #     move = alpha_beta_cutoff(game, state)
-    #     depth += 1
+    while time.perf_counter() < end:
+        game.d = depth
+        move = alpha_beta_cutoff(game, state)
+        depth += 1
 
     print("iterative deepening to depth: ", game.d)
 
@@ -379,6 +373,8 @@ class TicTacToe(Game):
             match = match + self.k_in_row(board, move, player, (1, -1), k)
             match = match + self.k_in_row(board, move, player, (1, 1), k)
             return match
+
+        print("eval1")
 
         # Maybe to accelerate, return 0 if number of pieces on board is less than half of board size:
         if len(state.moves) <= self.k / 2:
