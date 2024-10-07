@@ -172,13 +172,13 @@ class MCTS: #Monte Carlo Tree Search implementation
             print("nd.visitCount: ", tempNode.visitCount)
             print("to move: ", tempNode.state.to_move)
             if tempNode.state.to_move == winningPlayer:
-                tempNode.winScore += 1
+                tempNode.winScore += 0
                 print("winscore: ", tempNode.winScore)
             elif winningPlayer == "N":
                 tempNode.winScore += 0.5
                 print("winscore: ", tempNode.winScore)
             else:
-                tempNode.winScore += 0
+                tempNode.winScore += 1
                 print("winscore: ", tempNode.winScore)
             tempNode = tempNode.parent
 
@@ -186,13 +186,13 @@ class MCTS: #Monte Carlo Tree Search implementation
         print("nd.visitCount: ", tempNode.visitCount)
         print("to move: ", tempNode.state.to_move)
         if tempNode.state.to_move == winningPlayer:
-            tempNode.winScore += 1
+            tempNode.winScore += 0
             print("winscore: ", tempNode.winScore)
         elif winningPlayer == "N":
             tempNode.winScore += 0.5
             print("winscore: ", tempNode.winScore)
         else:
-            tempNode.winScore += 0
+            tempNode.winScore += 1
             print("winscore: ", tempNode.winScore)
 
 
