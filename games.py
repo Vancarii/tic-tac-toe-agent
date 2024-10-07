@@ -59,7 +59,7 @@ def minmax_cutoff(game, state):
     """Given a state in a game, calculate the best move by searching
     forward all the way to the cutoff depth. At that level use evaluation func."""
     print("your code goes here -15pt")
-    # pass
+
     player = game.to_move(state)
 
     def max_value(state, depth):
@@ -90,6 +90,12 @@ def minmax_player(game, state):
     print("Your code goes here -5pt")
     """Use a method to speed up at the start to avoid search down a deep tree with not much outcome."""
 
+    # use random player 3 moves before starting min max
+    # for sizes 4x4 and 5x5 since my the fourth move the bot needs to
+    # start blocking the player
+    if (len(state.moves) >= game.size*game.size-3) and game.size > 3:
+        return random_player(game, state)
+
     if game.timer < 0:
         game.d = -1
         return minmax(game, state)
@@ -98,7 +104,7 @@ def minmax_player(game, state):
     end = start + game.timer
     """use the above timer to implement iterative deepening loop bellow, using minmax_cutoff(), controlled by the timer"""
     move = None
-    # print("Your code goes here -5pt")
+    print("Your code goes here -5pt")
 
     depth = 1
     while time.perf_counter() < end:
@@ -118,6 +124,7 @@ def alpha_beta(game, state):
     """Search game to determine best action; use alpha-beta pruning.
      this version searches all the way to the leaves."""
     player = game.to_move(state)
+
 
     def max_value(state, alpha, beta):
         if game.terminal_test(state):
@@ -141,12 +148,11 @@ def alpha_beta(game, state):
             beta = min(beta, v)
         return v
 
-
     alpha = -np.inf
     beta = np.inf
-    best_action = None
     best_action = max(game.actions(state), key=lambda a: min_value(game.result(state, a), alpha, beta), default=None)
     print("alpha_beta: Your code goes here -15pt")
+
 
     return best_action
 
@@ -188,9 +194,9 @@ def alpha_beta_cutoff(game, state):
     # The default test cuts off at depth d or at a terminal state
     alpha = -np.inf
     beta = np.inf
-    best_action = None
     best_action = max(game.actions(state), key=lambda a: min_value(game.result(state, a), alpha, beta, 1), default=None)
-    # print("Your code goes here -15pt")
+    print("Your code goes here -15pt")
+
 
     return best_action
 
@@ -200,8 +206,12 @@ def alpha_beta_player(game, state):
     print("Your code goes here -5pt")
     """Use a method to speed up at the start to avoid search down a long tree with not much outcome.
     Hint: for speedup use random_player for start of the game when you see search time is too long"""
-    # if (len(state.moves) == game.size*game.size-1) and game.size > 3:
-    #     return random_player(game, state)
+
+    # use random player 3 moves before starting min max
+    # for sizes 4x4 and 5x5 since my the fourth move the bot needs to
+    # start blocking the player
+    if (len(state.moves) >= game.size*game.size-3) and game.size > 3:
+        return random_player(game, state)
 
     if( game.timer < 0):
         game.d = -1
@@ -212,7 +222,7 @@ def alpha_beta_player(game, state):
     """use the above timer to implement iterative deepening using alpha_beta_cutoff() version"""
     move = None
     
-    # print("Your code goes here -5pt")
+    print("Your code goes here -5pt")
 
     depth = 1
     while time.perf_counter() < end:
@@ -379,72 +389,36 @@ class TicTacToe(Game):
            return 0
 
 
-
-        # print("Your code goes here 15pt.")
-        best = 0
-
-        for move in self.actions(state):
-            res = possiblekComplete(move, state.board, state.to_move, self.k - 1)
-            if res >= best:
-                best = res
-        return best
-
-        # player = state.to_move  # The player whose move is next (current player)
-        # opponent = 'X' if player == 'O' else 'O'
-
-        # Scores for the board's current state
-        # score = 0
-
-        # # Heuristic scoring factors
-        # win_score = 1000  # A large score for winning states
-        # block_score = 100  # A moderate score for blocking the opponent's potential win
-        # align_score = 10  # A small score for having 2 in a row or creating lines
-        #
-        # # Iterate through the moves available on the board
-        # for move in state.moves:
-        #     # Check if the player can potentially complete a line with k-1 moves
-        #     player_potential = possiblekComplete(move, state.board, player, self.k - 1)
-        #     opponent_potential = possiblekComplete(move, state.board, opponent, self.k - 1)
-        #
-        #     # Add score for player potential to complete (align_score is used here)
-        #     score += player_potential * align_score
-        #
-        #     # Subtract score for opponent's potential to complete (block_score is used to block opponent)
-        #     score -= opponent_potential * block_score
-        #
-        #     # Check if the player or opponent can win with this move (k-in-a-row)
-        #     if possiblekComplete(move, state.board, player, self.k) > 0:
-        #         return win_score  # Immediate win for player
-        #     if possiblekComplete(move, state.board, opponent, self.k) > 0:
-        #         return -win_score  # Immediate win for opponent, so large negative score
-        #
-        # return score
+        print("Your code goes here 15pt.")
 
 
+        player = state.to_move
+        opponent = 'X' if player == 'O' else 'O'
 
-        # score = 0
-        #
-        # for i in range(1, self.k):
-        #     print("i = ", i)
-        #
-        #     player_lines = possiblekComplete(state.move, state.board, 'X', i)
-        #     print("player_lines = ", player_lines)
-        #     opponent_lines = possiblekComplete(state.move, state.board, 'O', i)
-        #     print("opponent_lines = ", opponent_lines)
-        #
-        #     if i == (self.k-1):
-        #         score += player_lines * 1000
-        #         score -= opponent_lines * 1000
-        #         print("score1 = ", score)
-        #     else:
-        #         score += player_lines * (10 ** (i-1))
-        #         print("score2 = ", score)
-        #         score -= opponent_lines * (10 ** (i-1))
-        #         print("score3 = ", score)
-        #
-        #
-        #
-        # return score
+        score = 0
+
+        win_score = 1000
+        block_score = 100
+        align_score = 10
+
+        # Iterate through the moves available on the board
+        for move in state.moves:
+            # Check if the player can complete a line with k-1 moves
+            player_potential = possiblekComplete(move, state.board, player, self.k - 1)
+            opponent_potential = possiblekComplete(move, state.board, opponent, self.k - 1)
+
+            score += player_potential * align_score
+
+            # Subtract score for opponent's potential to complete
+            score -= opponent_potential * block_score
+
+            # Check if the player or opponent can win with this move
+            if possiblekComplete(move, state.board, player, self.k) > 0:
+                return win_score
+            if possiblekComplete(move, state.board, opponent, self.k) > 0:
+                return -win_score
+
+        return score
 
 
     #@staticmethod

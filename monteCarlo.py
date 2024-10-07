@@ -48,33 +48,27 @@ class MCTS: #Monte Carlo Tree Search implementation
          SELECT, EXPEND, SIMULATE, and BACKUP. Once time is up
         we use getChildWithMaxScore() to pick the node to move to
         """
-        # print("MCTS: your code goes here. -10")
+        print("MCTS: your code goes here. -10")
 
         while time.perf_counter() < end:
-            print("\n\n===================================== Selecting Node =====================================")
+
             selectedNode = self.selectNode(self.root)
-            print("Selected Node: ", selectedNode.state.moves)
-            print("\nExpanding Node =====================================")
+
             if self.isTerminalState(selectedNode.state.utility, selectedNode.state.moves) == 0:
                 self.expandNode(selectedNode)
 
-            print("\nSimulating Random Play =====================================")
             winningPlayer = self.simulateRandomPlay(selectedNode)
-            print("Winning Player: ", winningPlayer)
-            print("\nBack Propagation =====================================")
             self.backPropagation(selectedNode, winningPlayer)
 
         winnerNode = self.root.getChildWithMaxScore()
-        print("Winner Node: ", winnerNode.state)
         assert(winnerNode is not None)
-        # self.root = winnerNode
         return winnerNode.state.move
 
 
     """SELECT stage function. walks down the tree using findBestNodeWithUCT()"""
     def selectNode(self, nd):
         node = nd
-        # print("selectNode: Your code goes here -5pt")
+        print("Your code goes here -5pt")
         if len(node.children) == 0:
             self.expandNode(node)
         while len(node.children) != 0:
@@ -85,7 +79,7 @@ class MCTS: #Monte Carlo Tree Search implementation
         """finds the child node with the highest UCT. Parse nd's children and use uctValue() to collect uct's for the
         children....."""
         childUCT = []
-        # print("findBestNodeWithUCT: Your code goes here -2pt")
+        print("Your code goes here -2pt")
 
         for child in nd.children:
             value = self.uctValue(child.parent.visitCount, child.winScore, child.visitCount)
@@ -98,24 +92,21 @@ class MCTS: #Monte Carlo Tree Search implementation
 
     def uctValue(self, parentVisit, nodeScore, nodeVisit):
         """compute Upper Confidence Value for a node"""
-        # print("UCT: Your code goes here -3pt")
+        print("Your code goes here -3pt")
         if nodeVisit == 0:
             return sys.maxsize
-            # return 0 if self.exploreFactor == 0 else sys.maxsize
         return (nodeScore / nodeVisit) + self.exploreFactor * math.sqrt(math.log(parentVisit) / nodeVisit)
-        # pass
+
 
     """EXPAND stage function. """
     def expandNode(self, nd):
         """generate all the possible child nodes and append them to nd's children"""
-        # print("expandNode: Your code goes here -5pt")
         stat = nd.state
         if not nd.children:
             tempState = GameState(to_move=stat.to_move, move=stat.move, utility=stat.utility, board=stat.board, moves=stat.moves)
             for a in self.game.actions(tempState):
                 childNode = self.Node(self.game.result(tempState, a), nd)
                 nd.children.append(childNode)
-                print("Child Node: ", childNode.state)
 
     """SIMULATE stage function"""
     def simulateRandomPlay(self, nd):
@@ -139,60 +130,28 @@ class MCTS: #Monte Carlo Tree Search implementation
 
         return 'X' if winStatus > 0 else 'O' if winStatus < 0 else 'N'
 
-    # def backPropagation(self, nd, winningPlayer):
-    #     """propagate upword to update score and visit count from
-    #     the current leaf node to the root node."""
-    #     tempNode = nd
-    #     # print("Your code goes here -5pt")
-    #     while tempNode.parent:
-    #         score = 0
-    #         if tempNode.state.to_move == winningPlayer:  # win
-    #             score = 1
-    #         elif winningPlayer == "N":
-    #             score = 0.5
-    #         tempNode.visitCount += 1
-    #         tempNode.winScore += score
-    #         tempNode = tempNode.parent
-    #     score = 0
-    #     if tempNode.state.to_move == winningPlayer:  # win
-    #         score = 1
-    #     elif winningPlayer == "N":
-    #         score = 0.5
-    #     tempNode.visitCount += 1
-    #     tempNode.winScore += score
 
     def backPropagation(self, nd, winningPlayer):
         """propagate upword to update score and visit count from
         the current leaf node to the root node."""
         tempNode = nd
-        # print("backpropograte: Your code goes here -5pt")
-        print("Winning Player: ", winningPlayer)
+        print("Your code goes here -5pt")
         while tempNode.parent:
             tempNode.visitCount += 1
-            print("nd.visitCount: ", tempNode.visitCount)
-            print("to move: ", tempNode.state.to_move)
             if tempNode.state.to_move == winningPlayer:
                 tempNode.winScore += 0
-                print("winscore: ", tempNode.winScore)
             elif winningPlayer == "N":
                 tempNode.winScore += 0.5
-                print("winscore: ", tempNode.winScore)
             else:
                 tempNode.winScore += 1
-                print("winscore: ", tempNode.winScore)
             tempNode = tempNode.parent
 
         tempNode.visitCount += 1
-        print("nd.visitCount: ", tempNode.visitCount)
-        print("to move: ", tempNode.state.to_move)
         if tempNode.state.to_move == winningPlayer:
             tempNode.winScore += 0
-            print("winscore: ", tempNode.winScore)
         elif winningPlayer == "N":
             tempNode.winScore += 0.5
-            print("winscore: ", tempNode.winScore)
         else:
             tempNode.winScore += 1
-            print("winscore: ", tempNode.winScore)
 
 
